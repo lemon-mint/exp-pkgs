@@ -170,4 +170,56 @@ func TestFlatten(t *testing.T) {
 			t.Errorf("Flatten() = %v, want %v", got, want)
 		}
 	})
+
+	t.Run("struct", func(t *testing.T) {
+		type S struct {
+			A int
+			B int
+		}
+		in := S{1, 2}
+		want := []int{1, 2}
+		got := Flatten[int](in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("struct-ptr", func(t *testing.T) {
+		type S struct {
+			A int
+			B int
+		}
+		in := S{1, 2}
+		want := []int{1, 2}
+		got := Flatten[int](&in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("struct2", func(t *testing.T) {
+		type S struct {
+			A int
+			B struct {
+				C           int
+				D           int
+				InvalidType complex128
+			}
+		}
+		in := S{1, struct {
+			C           int
+			D           int
+			InvalidType complex128
+		}{
+			C:           2,
+			D:           3,
+			InvalidType: 10 + 10i,
+		},
+		}
+		want := []int{1, 2, 3}
+		got := Flatten[int](in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
 }

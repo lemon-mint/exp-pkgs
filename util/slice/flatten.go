@@ -28,6 +28,9 @@ TYPE_SWITCH:
 	default:
 		rv := reflect.ValueOf(data)
 		switch rv.Kind() {
+		case reflect.Pointer:
+			data = rv.Elem().Interface()
+			goto TYPE_SWITCH
 		case reflect.Slice:
 			var result []T
 			for i := 0; i < rv.Len(); i++ {
@@ -42,9 +45,13 @@ TYPE_SWITCH:
 				result = append(result, Flatten[T](elem)...)
 			}
 			return result
-		case reflect.Pointer:
-			data = rv.Elem().Interface()
-			goto TYPE_SWITCH
+		case reflect.Struct:
+			var result []T
+			for i := 0; i < rv.NumField(); i++ {
+				elem := rv.Field(i).Interface()
+				result = append(result, Flatten[T](elem)...)
+			}
+			return result
 		}
 	}
 	return nil
