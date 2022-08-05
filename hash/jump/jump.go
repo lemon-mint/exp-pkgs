@@ -1,6 +1,7 @@
 package jump
 
 //go:nosplit
+//JumpConsistentHash: https://arxiv.org/abs/1406.2294
 func JumpConsistentHash(key uint64, num_buckets int32) int32 {
 	var b, j int64 = -1, 0
 	for j < int64(num_buckets) {
