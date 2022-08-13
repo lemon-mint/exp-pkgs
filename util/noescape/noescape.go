@@ -58,3 +58,11 @@ func Write(w io.Writer, p []byte) (n int, err error) {
 func Read(r io.Reader, p []byte) (n int, err error) {
 	return r.Read(Bytes(&p))
 }
+
+func ReadAtLeast(r io.Reader, p []byte, min int) (n int, err error) {
+	return io.ReadAtLeast(r, Bytes(&p), min)
+}
+
+func ReadFull(r io.Reader, p []byte) (n int, err error) {
+	return io.ReadFull(r, Bytes(&p))
+}
