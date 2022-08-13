@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"sync"
 
+	"github.com/lemon-mint/experiment/fastrand/alg/splitmix64"
 	"github.com/lemon-mint/experiment/util/noescape"
 )
 
@@ -17,7 +18,6 @@ func newRNG() *RNG {
 	_, err := noescape.Read(rand.Reader, data[:])
 	if err != nil {
 		// If crypto/rand fails, we'll just use the runtime.fastrand implementation.
-		// TODO: Use Splitmix64 to initialize the state.
 		binary.LittleEndian.PutUint32(data[0:4], runtime_fastrand())
 		binary.LittleEndian.PutUint32(data[4:8], runtime_fastrand())
 		binary.LittleEndian.PutUint32(data[8:12], runtime_fastrand())
@@ -26,6 +26,13 @@ func newRNG() *RNG {
 	r := &RNG{}
 	r.state[0] = binary.LittleEndian.Uint64(data[0:8])
 	r.state[1] = binary.LittleEndian.Uint64(data[8:16])
+
+	// Use Splitmix64 to initialize the state.
+	r.state[0] += splitmix64.IncrementConstant
+	r.state[1] += splitmix64.IncrementConstant
+	r.state[0] = splitmix64.Splitmix64(&r.state[0])
+	r.state[1] = splitmix64.Splitmix64(&r.state[1])
+
 	return r
 }
 
