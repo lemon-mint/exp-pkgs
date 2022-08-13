@@ -28,8 +28,8 @@ func newRNG() *RNG {
 	r.state[1] = binary.LittleEndian.Uint64(data[8:16])
 
 	// Use Splitmix64 to initialize the state.
-	r.state[0] += splitmix64.IncrementConstant
-	r.state[1] += splitmix64.IncrementConstant
+	r.state[0] += 1757750930446974760
+	r.state[1] += 7151402297004559274
 	r.state[0] = splitmix64.Splitmix64(&r.state[0])
 	r.state[1] = splitmix64.Splitmix64(&r.state[1])
 
@@ -48,4 +48,15 @@ func AcquireRNG() *RNG {
 
 func ReleaseRNG(r *RNG) {
 	rngPool.Put(r)
+}
+
+func WithSeed(seed uint64) *RNG {
+	r := AcquireRNG()
+	r.SetSeed(seed)
+	return r
+}
+
+func (r *RNG) SetSeed(seed uint64) {
+	r.state[0] = splitmix64.Splitmix64(&seed)
+	r.state[1] = splitmix64.Splitmix64(&seed)
 }
