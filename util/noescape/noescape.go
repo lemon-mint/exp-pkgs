@@ -21,8 +21,6 @@ func Bytes(p *[]byte) []byte {
 type blackholestruct struct {
 	b     bool
 	bytes []byte
-	up    unsafe.Pointer
-	v     any
 }
 
 var blackhole = &blackholestruct{}
