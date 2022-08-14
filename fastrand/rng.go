@@ -60,18 +60,18 @@ func WithSeed(seed uint64) *RNG {
 	return r
 }
 
-func (r *RNG) SetSeed(seed uint64) {
-	r.state[0] = splitmix64.Splitmix64(&seed)
-	r.state[1] = splitmix64.Splitmix64(&seed)
+func (rng *RNG) SetSeed(seed uint64) {
+	rng.state[0] = splitmix64.Splitmix64(&seed)
+	rng.state[1] = splitmix64.Splitmix64(&seed)
 }
 
 // Release Put the RNG back into the pool.
 // After calling this, the RNG is invalid and should not be used.
-func (r *RNG) Release() {
-	ReleaseRNG(r)
+func (rng *RNG) Release() {
+	ReleaseRNG(rng)
 }
 
 // Refill Initialize the RNG with a new seed.
-func (r *RNG) Refill() {
-	refill(r)
+func (rng *RNG) Refill() {
+	refill(rng)
 }
