@@ -14,6 +14,20 @@ func TestRNG_Int63(t *testing.T) {
 	})
 }
 
+func Test_Int63n(t *testing.T) {
+	rng := AcquireRNG()
+	defer ReleaseRNG(rng)
+	rng.SetSeed(42)
+	for i := 0; i < 100000; i++ {
+		if rng.Int63n(10) < 0 {
+			t.Errorf("rng.Int63n(10) < 0")
+		}
+		if rng.Int63n(100) < 0 {
+			t.Errorf("rng.Int63n(100) < 0")
+		}
+	}
+}
+
 func BenchmarkRNGUint64(b *testing.B) {
 	b.RunParallel(func(p *testing.PB) {
 		rng := AcquireRNG()
