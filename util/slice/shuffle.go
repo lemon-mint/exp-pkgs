@@ -1,7 +1,7 @@
 package slice
 
 import (
-	"github.com/lemon-mint/experiment/fastrand"
+	"v8.run/go/exp/fastrand"
 )
 
 func Shuffle[T any](data []T) {

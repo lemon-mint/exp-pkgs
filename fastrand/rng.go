@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"sync"
 
-	"github.com/lemon-mint/experiment/fastrand/alg/splitmix64"
-	"github.com/lemon-mint/experiment/util/noescape"
+	"v8.run/go/exp/fastrand/alg/splitmix64"
+	"v8.run/go/exp/util/noescape"
 )
 
 type RNG struct {

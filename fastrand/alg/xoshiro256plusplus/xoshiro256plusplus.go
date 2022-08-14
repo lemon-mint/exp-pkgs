@@ -16,7 +16,7 @@ package xoshiro256plusplus
 import (
 	"sync"
 
-	"github.com/lemon-mint/experiment/fastrand/alg/splitmix64"
+	"v8.run/go/exp/fastrand/alg/splitmix64"
 )
 
 type State [4]uint64

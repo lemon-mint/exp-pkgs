@@ -1,8 +1,8 @@
 package alg
 
 import (
-	"github.com/lemon-mint/experiment/fastrand/alg/splitmix64"
-	"github.com/lemon-mint/experiment/fastrand/alg/xoshiro256plusplus"
+	"v8.run/go/exp/fastrand/alg/splitmix64"
+	"v8.run/go/exp/fastrand/alg/xoshiro256plusplus"
 )
 
 func Splitmix64() uint64 {
