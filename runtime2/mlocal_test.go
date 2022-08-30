@@ -11,3 +11,15 @@ func TestSetGet(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkSetGet(b *testing.B) {
+	mls := NewMLocal[int]()
+	b.RunParallel(func(p *testing.PB) {
+		var i int
+		for p.Next() {
+			mls.Set(i)
+			mls.Get()
+			i++
+		}
+	})
+}
