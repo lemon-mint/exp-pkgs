@@ -15,16 +15,25 @@ type htab[K comparable, V any] struct {
 	Metadata *uint8
 	Data     []atomic.Pointer[kv[K, V]]
 	Size     uint64
+	Count    atomic.Int64
 }
 
-func newhtab[K comparable, V any](size uint32) *htab[K, V] {
+func calcSize(size uint64) uint64 {
 	log2Size := int(math.Log2(float64(size))) + 3
-	Size := 1 << log2Size
+	Size := uint64(1) << log2Size
+	return Size
+}
+
+func newhtab[K comparable, V any](size uint64) *htab[K, V] {
+	Size := calcSize(size)
 	metadata := make([]byte, Size)
+	for i := range metadata {
+		metadata[i] = empty
+	}
 	t := htab[K, V]{
 		Metadata: &metadata[0],
 		Data:     make([]atomic.Pointer[kv[K, V]], Size),
-		Size:     uint64(Size),
+		Size:     Size,
 	}
 
 	return &t
@@ -82,19 +91,21 @@ RESCAN:
 	StartOffset := MetaHeadOffset
 	for {
 		metadata := load8off(t.Metadata, MetaHeadOffset)
+	JL:
 		for j := uint64(0); j < 8; j++ {
 			switch metadata[j] {
 			case empty:
 				return nil, false
 			case Hash2:
 				KV := t.Data[MetaHeadOffset+j].Load()
+
 				if KV == nil {
 					metadata = load8off(t.Metadata, MetaHeadOffset)
 					switch metadata[j] {
 					case deleted:
 						return nil, false
 					case Hash2:
-						return nil, false
+						continue JL
 					default:
 						goto RESCAN
 					}
@@ -105,6 +116,7 @@ RESCAN:
 				}
 			}
 		}
+
 		MetaHeadOffset = (MetaHeadOffset + 8) & (t.Size - 1)
 		if MetaHeadOffset == StartOffset {
 			break
@@ -115,7 +127,7 @@ RESCAN:
 }
 
 //go:nosplit
-func (t *htab[K, V]) insert(hash uint64, KVPair *kv[K, V]) {
+func (t *htab[K, V]) insert(hash uint64, KVPair *kv[K, V], strict bool) {
 	key := KVPair.Key
 	Hash1 := h1(hash)
 	Hash2 := h2(hash)
@@ -129,6 +141,11 @@ L:
 		for j := uint64(0); j < 8; j++ {
 			v := metadata[j]
 			NextJ = j + 1
+
+			if !strict && v != empty {
+				continue
+			}
+
 			switch v {
 			case empty, deleted, rescan:
 				// TRY CAS
@@ -158,6 +175,7 @@ L:
 					}
 
 					// DROP VALUE
+					t.Count.Add(-1)
 					return
 				}
 			}
@@ -183,6 +201,7 @@ L:
 						desired[j] = rescan
 						if cas8off(t.Metadata, MetaHeadOffset, metadata, desired) {
 							t.Data[MetaHeadOffset+j].CompareAndSwap(KV, nil)
+							t.Count.Add(-1)
 							break
 						}
 
@@ -249,6 +268,7 @@ L:
 						desired := metadata
 						desired[j] = deleted
 						if cas8off(t.Metadata, MetaHeadOffset, metadata, desired) {
+							t.Count.Add(-1)
 							break
 						}
 
