@@ -56,8 +56,19 @@ func (t *Topic[T]) Unsubscribe(s *Subscription[T]) {
 	return
 }
 
+func (t *Topic[T]) Subscribers() uint64 {
+	t.rwmu.RLock()
+	s := uint64(len(t.subscriptions))
+	t.rwmu.RUnlock()
+	return s
+}
+
 func (s *Subscription[T]) Unsubscribe() {
 	s.t.Unsubscribe(s)
+}
+
+func (s *Subscription[T]) Topic() *Topic[T] {
+	return s.t
 }
 
 func (t *Topic[T]) Broadcast(v T) {

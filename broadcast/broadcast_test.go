@@ -24,13 +24,62 @@ func TestTopicBroadcast(t *testing.T) {
 	}
 }
 
-func BenchmarkBroadcast(b *testing.B) {
+func BenchmarkBroadcast_8(b *testing.B) {
 	tt := NewTopic[uint32]()
 	var ctr uint32
-	s := tt.Subscribe(func(v uint32) {
-		atomic.AddUint32(&ctr, v)
+	for i := 0; i < 8; i++ {
+		tt.Subscribe(func(v uint32) {
+			atomic.AddUint32(&ctr, v)
+		})
+	}
+
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			tt.Broadcast(1)
+		}
 	})
-	defer s.Unsubscribe()
+}
+
+func BenchmarkBroadcast_256(b *testing.B) {
+	tt := NewTopic[uint32]()
+	var ctr uint32
+	for i := 0; i < 256; i++ {
+		tt.Subscribe(func(v uint32) {
+			atomic.AddUint32(&ctr, v)
+		})
+	}
+
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			tt.Broadcast(1)
+		}
+	})
+}
+
+func BenchmarkBroadcast_1024(b *testing.B) {
+	tt := NewTopic[uint32]()
+	var ctr uint32
+	for i := 0; i < 1024; i++ {
+		tt.Subscribe(func(v uint32) {
+			atomic.AddUint32(&ctr, v)
+		})
+	}
+
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			tt.Broadcast(1)
+		}
+	})
+}
+
+func BenchmarkBroadcast_2048(b *testing.B) {
+	tt := NewTopic[uint32]()
+	var ctr uint32
+	for i := 0; i < 2048; i++ {
+		tt.Subscribe(func(v uint32) {
+			atomic.AddUint32(&ctr, v)
+		})
+	}
 
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
