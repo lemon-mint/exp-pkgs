@@ -23,3 +23,18 @@ func TestTopicBroadcast(t *testing.T) {
 		t.Fatalf("expected ctr == 10000, got %d", ctr)
 	}
 }
+
+func BenchmarkBroadcast(b *testing.B) {
+	tt := NewTopic[uint32]()
+	var ctr uint32
+	s := tt.Subscribe(func(v uint32) {
+		atomic.AddUint32(&ctr, v)
+	})
+	defer s.Unsubscribe()
+
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			tt.Broadcast(1)
+		}
+	})
+}
