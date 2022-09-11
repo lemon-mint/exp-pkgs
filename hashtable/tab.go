@@ -7,6 +7,7 @@ import (
 )
 
 type kv[K comparable, V any] struct {
+	Hash  uint64
 	Key   K
 	Value V
 }
@@ -111,7 +112,7 @@ RESCAN:
 					}
 				}
 
-				if KV.Key == key {
+				if KV.Hash == hash && KV.Key == key {
 					return KV, true
 				}
 			}
@@ -169,7 +170,7 @@ L:
 			case Hash2:
 				// LOAD KV
 				KV := t.Data[MetaHeadOffset+j].Load()
-				if KV != nil && key == KV.Key {
+				if KV != nil && KV.Hash == hash && key == KV.Key {
 					if t.Data[MetaHeadOffset+j].CompareAndSwap(KV, KVPair) {
 						break L
 					}
@@ -195,7 +196,7 @@ L:
 				return
 			case Hash2:
 				KV := t.Data[MetaHeadOffset+j].Load()
-				if KV != nil && KV.Key == key {
+				if KV != nil && KV.Hash == hash && KV.Key == key {
 					for {
 						desired := metadata
 						desired[j] = rescan
@@ -237,7 +238,7 @@ L:
 				break L
 			case Hash2:
 				KV := t.Data[MetaHeadOffset+j].Load()
-				if KV != nil && KV.Key == key {
+				if KV != nil && KV.Hash == hash && KV.Key == key {
 					IndexStack = append(IndexStack, MetaHeadOffset+j)
 				}
 			}

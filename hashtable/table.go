@@ -46,10 +46,9 @@ func (tab *Table[K, V]) resize(size uint64) {
 			default:
 				KV := old.Data[MetaHeadOffset+j].Load()
 				if KV != nil {
-					hash := tab.hasher(KV.Key)
-					_, ok := newtab.lookup(hash, KV.Key)
+					_, ok := newtab.lookup(KV.Hash, KV.Key)
 					if !ok {
-						newtab.insert(hash, KV, false)
+						newtab.insert(KV.Hash, KV, false)
 					} else {
 						newtab.Count.Add(-1)
 					}
@@ -62,7 +61,9 @@ func (tab *Table[K, V]) resize(size uint64) {
 }
 
 func (tab *Table[K, V]) Insert(key K, value V) {
+	h := tab.hasher(key)
 	pair := &kv[K, V]{
+		Hash:  h,
 		Key:   key,
 		Value: value,
 	}
@@ -80,7 +81,7 @@ func (tab *Table[K, V]) Insert(key K, value V) {
 			}
 		}
 
-		t.insert(tab.hasher(key), pair, true)
+		t.insert(h, pair, true)
 
 		nt := tab.htab.Load()
 		if nt == t {
