@@ -12,6 +12,9 @@ func TestShuffle(t *testing.T) {
 		copy(in2, in)
 		Shuffle(in)
 		if reflect.DeepEqual(in, in2) {
+			Shuffle(in)
+		}
+		if reflect.DeepEqual(in, in2) {
 			t.Errorf("ShuffleSlice(%v) did not shuffle", in)
 		}
 	})
@@ -21,6 +24,9 @@ func TestShuffle(t *testing.T) {
 		in2 := make([]string, len(in))
 		copy(in2, in)
 		Shuffle(in)
+		if reflect.DeepEqual(in, in2) {
+			Shuffle(in)
+		}
 		if reflect.DeepEqual(in, in2) {
 			t.Errorf("ShuffleSlice(%v) did not shuffle", in)
 		}
