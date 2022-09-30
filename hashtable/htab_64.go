@@ -98,15 +98,13 @@ func (h *htab[K, V]) lookup(hash uint64, key K) (val V, ok bool) {
 
 	blkIndex := hash1 & (h.size - 1)
 	for j := uint64(0); j < h.size; j++ {
-		blk := h.blks[blkIndex]
-		// meta := blk.Meta.Load() // Atomic MetaData
-		meta := blk.Meta
+		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
 		for i := range meta.H2A {
 			switch meta.H2A[i] {
 			case empty:
 				return
 			case hash2:
-				v := (*kv[K, V])(atomic.LoadPointer(&blk.Data[i]))
+				v := (*kv[K, V])(atomic.LoadPointer(&h.blks[blkIndex].Data[i]))
 				if v != nil {
 					if v.Hash == hash && v.Key == key {
 						val = v.Value
@@ -135,7 +133,7 @@ func (h *htab[K, V]) store(hash uint64, key K, val V) {
 	}
 
 	h.blks[initBlk].Meta.VLock()
-	defer h.blks[initBlk].Meta.VUnlock()
+	//defer h.blks[initBlk].Meta.VUnlock()
 L:
 	for j := uint64(0); j < h.size; j++ {
 		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
@@ -151,6 +149,7 @@ L:
 							&h.blks[blkIndex].Data[i],
 							unsafe.Pointer(newkv),
 						)
+						h.blks[initBlk].Meta.VUnlock()
 						return
 					}
 				}
@@ -173,6 +172,7 @@ L:
 						&h.blks[blkIndex].Data[i],
 						unsafe.Pointer(newkv),
 					)
+					h.blks[initBlk].Meta.VUnlock()
 					return
 				}
 
@@ -193,6 +193,7 @@ L:
 		}
 		blkIndex += (j*j + j) / 2
 	}
+	h.blks[initBlk].Meta.VUnlock()
 	return
 }
 
@@ -204,13 +205,13 @@ func (h *htab[K, V]) delete(hash uint64, key K) {
 	blkIndex := initBlk
 
 	h.blks[initBlk].Meta.VLock()
-	defer h.blks[initBlk].Meta.VUnlock()
 
 	for j := uint64(0); j < h.size; j++ {
 		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
 		for i := range meta.H2A {
 			switch meta.H2A[i] {
 			case empty:
+				h.blks[initBlk].Meta.VUnlock()
 				return
 			case hash2:
 				v := (*kv[K, V])(atomic.LoadPointer(&h.blks[blkIndex].Data[i]))
@@ -230,6 +231,7 @@ func (h *htab[K, V]) delete(hash uint64, key K) {
 							meta = h.blks[blkIndex].Meta.Load()
 						}
 
+						h.blks[initBlk].Meta.VUnlock()
 						return
 					}
 				}
@@ -237,4 +239,16 @@ func (h *htab[K, V]) delete(hash uint64, key K) {
 		}
 		blkIndex += (j*j + j) / 2
 	}
+
+	h.blks[initBlk].Meta.VUnlock()
+	return
+}
+
+func newHtab[K comparable, V any](size uint64) *htab[K, V] {
+	ht := &htab[K, V]{
+		blks:  make([]hblk, size),
+		size:  size,
+		count: 0,
+	}
+	return ht
 }
