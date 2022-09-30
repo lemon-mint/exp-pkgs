@@ -11,7 +11,7 @@ func memhash(p unsafe.Pointer, h, s uintptr) uintptr
 
 func MemHash(b []byte, seed uintptr) uintptr {
 	if len(b) == 0 {
-		return 0
+		return seed
 	}
 	return memhash(unsafe.Pointer(&b[0]), seed, uintptr(len(b)))
 }
