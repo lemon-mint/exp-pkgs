@@ -16,7 +16,7 @@ type Table[K comparable, V any] struct {
 }
 
 func calcInitSize(a uint64) uint64 {
-	return 1 << uint64(math.Log2(float64(a*2))+1)
+	return 1 << uint64(math.Log2(float64(a))+1)
 }
 
 func New[K comparable, V any](size uint64, hasher func(K) uint64) *Table[K, V] {
