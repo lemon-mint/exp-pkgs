@@ -100,6 +100,7 @@ func (h *htab[K, V]) lookup(hash uint64, key K) (val V, ok bool) {
 	blkIndex := hash1 & (h.size - 1)
 	for j := uint64(0); j < h.size; j++ {
 		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
+		// meta := &h.blks[blkIndex].Meta
 		for i := range meta.H2A {
 			switch meta.H2A[i] {
 			case empty:
