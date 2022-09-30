@@ -162,31 +162,6 @@ func BenchmarkSyncMapRead90Write10(b *testing.B) {
 	})
 }
 
-func BenchmarkTableRead50Write50(b *testing.B) {
-	table := hashtable.New[string, uint64](size2, hash.MemHashString64)
-
-	for i := range keys2 {
-		table.Insert(keys2[i], 0)
-	}
-	b.ResetTimer()
-	b.RunParallel(func(p *testing.PB) {
-		for p.Next() {
-			for i := range keys2 {
-				table.Lookup(keys2[i])
-				table.Lookup(keys2[i])
-				table.Lookup(keys2[i])
-				table.Lookup(keys2[i])
-				table.Lookup(keys2[i])
-				table.Insert(keys2[i], 0)
-				table.Insert(keys2[i], 0)
-				table.Insert(keys2[i], 0)
-				table.Insert(keys2[i], 0)
-				table.Insert(keys2[i], 0)
-			}
-		}
-	})
-}
-
 func BenchmarkTableRead70Write30(b *testing.B) {
 	table := hashtable.New[string, uint64](size2, hash.MemHashString64)
 
@@ -232,6 +207,31 @@ func BenchmarkSyncMapRead70Write30(b *testing.B) {
 				table.Store(keys2[i], 0)
 				table.Store(keys2[i], 0)
 				table.Store(keys2[i], 0)
+			}
+		}
+	})
+}
+
+func BenchmarkTableRead50Write50(b *testing.B) {
+	table := hashtable.New[string, uint64](size2, hash.MemHashString64)
+
+	for i := range keys2 {
+		table.Insert(keys2[i], 0)
+	}
+	b.ResetTimer()
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			for i := range keys2 {
+				table.Lookup(keys2[i])
+				table.Lookup(keys2[i])
+				table.Lookup(keys2[i])
+				table.Lookup(keys2[i])
+				table.Lookup(keys2[i])
+				table.Insert(keys2[i], 0)
+				table.Insert(keys2[i], 0)
+				table.Insert(keys2[i], 0)
+				table.Insert(keys2[i], 0)
+				table.Insert(keys2[i], 0)
 			}
 		}
 	})
