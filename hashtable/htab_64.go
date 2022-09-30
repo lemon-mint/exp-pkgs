@@ -69,10 +69,11 @@ type hblk struct {
 }
 
 type htab[K comparable, V any] struct {
-	blks     []hblk
-	size     uint64
-	cachepad [8]uint64
-	count    uint64
+	blks    []hblk
+	size    uint64
+	version uint64
+	_       [8]uint64
+	count   uint64
 }
 
 func h1(v uint64) uint64 {
@@ -119,18 +120,12 @@ func (h *htab[K, V]) lookup(hash uint64, key K) (val V, ok bool) {
 	return
 }
 
-func (h *htab[K, V]) store(hash uint64, key K, val V) {
+func (h *htab[K, V]) store(hash uint64, newkv *kv[K, V]) {
 	hash1 := h1(hash)
 	hash2 := h2(hash)
 
 	initBlk := hash1 & (h.size - 1)
 	blkIndex := initBlk
-
-	newkv := &kv[K, V]{
-		Hash:  hash,
-		Key:   key,
-		Value: val,
-	}
 
 	h.blks[initBlk].Meta.VLock()
 	//defer h.blks[initBlk].Meta.VUnlock()
@@ -144,7 +139,7 @@ L:
 			case hash2:
 				v := (*kv[K, V])(atomic.LoadPointer(&h.blks[blkIndex].Data[i]))
 				if v != nil {
-					if v.Hash == hash && v.Key == key {
+					if v.Hash == hash && v.Key == newkv.Key {
 						atomic.StorePointer(
 							&h.blks[blkIndex].Data[i],
 							unsafe.Pointer(newkv),
@@ -173,6 +168,86 @@ L:
 						unsafe.Pointer(newkv),
 					)
 					h.blks[initBlk].Meta.VUnlock()
+
+					if meta.H2A[i] == empty {
+						atomic.AddUint64(&h.count, 1)
+					}
+					return
+				}
+
+				newmeta := h.blks[blkIndex].Meta.Load()
+				if newmeta.H2A[i] == hash2 {
+					// H2 Collision
+					break
+				}
+
+				if newmeta.H2A[i] == meta.H2A[i] {
+					// Retry
+					meta = newmeta
+					goto retry
+				}
+			case hash2:
+				// H2 Collision
+			}
+		}
+		blkIndex += (j*j + j) / 2
+	}
+	h.blks[initBlk].Meta.VUnlock()
+	return
+}
+
+func (h *htab[K, V]) storeIfNotExists(hash uint64, newkv *kv[K, V]) (stored bool) {
+	hash1 := h1(hash)
+	hash2 := h2(hash)
+
+	initBlk := hash1 & (h.size - 1)
+	blkIndex := initBlk
+
+	h.blks[initBlk].Meta.VLock()
+	//defer h.blks[initBlk].Meta.VUnlock()
+L:
+	for j := uint64(0); j < h.size; j++ {
+		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
+		for i := range meta.H2A {
+			switch meta.H2A[i] {
+			case empty:
+				break L
+			case hash2:
+				v := (*kv[K, V])(atomic.LoadPointer(&h.blks[blkIndex].Data[i]))
+				if v != nil {
+					if v.Hash == hash && v.Key == newkv.Key {
+						// Key Exists
+
+						h.blks[initBlk].Meta.VUnlock()
+						return
+					}
+				}
+			}
+		}
+		blkIndex += (j*j + j) / 2
+	}
+
+	for j := uint64(0); j < h.size; j++ {
+		meta := h.blks[blkIndex].Meta.Load() // Atomic MetaData
+		for i := range meta.H2A {
+			switch meta.H2A[i] {
+			case empty, deleted:
+			retry:
+				desired := meta
+				desired.H2A[i] = hash2
+
+				if h.blks[blkIndex].Meta.CompareAndSwap(meta, desired) {
+					atomic.StorePointer(
+						&h.blks[blkIndex].Data[i],
+						unsafe.Pointer(newkv),
+					)
+					h.blks[initBlk].Meta.VUnlock()
+
+					if meta.H2A[i] == empty {
+						atomic.AddUint64(&h.count, 1)
+					}
+
+					stored = true
 					return
 				}
 
@@ -242,6 +317,26 @@ func (h *htab[K, V]) delete(hash uint64, key K) {
 
 	h.blks[initBlk].Meta.VUnlock()
 	return
+}
+
+func (h *htab[K, V]) copyto(n *htab[K, V]) {
+	for j := range h.blks {
+		meta := h.blks[j].Meta.Load()
+	ML:
+		for i := range meta.H2A {
+			switch meta.H2A[i] {
+			case empty:
+				break ML
+			case deleted:
+				// skip
+			default:
+				v := (*kv[K, V])(atomic.LoadPointer(&h.blks[j].Data[i]))
+				if v != nil {
+					n.store(v.Hash, v)
+				}
+			}
+		}
+	}
 }
 
 func newHtab[K comparable, V any](size uint64) *htab[K, V] {

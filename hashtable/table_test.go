@@ -9,7 +9,7 @@ import (
 	"v8.run/go/exp/hashtable"
 )
 
-const size = 100000
+const size = 256
 
 var keys []string = func() []string {
 	k := make([]string, size)
