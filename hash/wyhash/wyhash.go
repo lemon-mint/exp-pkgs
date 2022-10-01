@@ -5,16 +5,20 @@ import (
 	"unsafe"
 )
 
-func _wyrot(x uint64) uint64 { return (x >> 32) | (x << 32) }
-
 func _wymix(A uint64, B uint64) uint64 {
 	B, A = bits.Mul64(A, B)
 	return A ^ B
 }
 
-func _wyr8(p *uint8) uint64 { return *(*uint64)(unsafe.Pointer(p)) }
+func _wyr8(p *uint8) uint64 {
+	var pp = (*[8]uint8)(unsafe.Pointer(p))
+	return uint64(pp[0]) | uint64(pp[1])<<8 | uint64(pp[2])<<16 | uint64(pp[3])<<24 | uint64(pp[4])<<32 | uint64(pp[5])<<40 | uint64(pp[6])<<48 | uint64(pp[7])<<56
+}
 
-func _wyr4(p *uint8) uint64 { return uint64(*(*uint32)(unsafe.Pointer(p))) }
+func _wyr4(p *uint8) uint64 {
+	var pp = (*[4]uint8)(unsafe.Pointer(p))
+	return uint64(uint32(pp[0]) | uint32(pp[1])<<8 | uint32(pp[2])<<16 | uint32(pp[3])<<24)
+}
 
 func _wyr3(p *uint8, k uintptr) uint64 {
 	// (((uint64_t)p[0]) << 16) | (((uint64_t)p[k >> 1]) << 8) | p[k - 1];

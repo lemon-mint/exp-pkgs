@@ -92,3 +92,14 @@ func Test_wyhash(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkWyHash(b *testing.B) {
+	var ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 = unsafe.Pointer(&[]byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")[0])
+	b.RunParallel(
+		func(p *testing.PB) {
+			for p.Next() {
+				_ = wyhash(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789, 62, 42, &_wyp)
+			}
+		},
+	)
+}
