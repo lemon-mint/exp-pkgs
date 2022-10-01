@@ -2,6 +2,7 @@ package wyhash
 
 import (
 	"math/bits"
+	"reflect"
 	"unsafe"
 )
 
@@ -71,4 +72,22 @@ func wyhash(key unsafe.Pointer, len uintptr, seed uint64, secret *[4]uint64) uin
 func wyrand(seed *uint64) uint64 {
 	*seed += 0xa0761d6478bd642f
 	return _wymix(*seed, *seed^0xe7037ed1a0b428db)
+}
+
+func Hash(b []byte, seed uint64) uint64 {
+	return wyhash(
+		unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&b)).Data),
+		uintptr((*reflect.SliceHeader)(unsafe.Pointer(&b)).Len),
+		seed,
+		&_wyp,
+	)
+}
+
+func HashString(b string, seed uint64) uint64 {
+	return wyhash(
+		unsafe.Pointer((*reflect.StringHeader)(unsafe.Pointer(&b)).Data),
+		uintptr((*reflect.StringHeader)(unsafe.Pointer(&b)).Len),
+		seed,
+		&_wyp,
+	)
 }
