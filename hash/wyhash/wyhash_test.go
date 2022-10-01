@@ -1,8 +1,11 @@
 package wyhash
 
 import (
+	"crypto/rand"
 	"testing"
 	"unsafe"
+
+	"v8.run/go/exp/fastrand/alg/splitmix64"
 )
 
 func Test_wyhash(t *testing.T) {
@@ -93,13 +96,146 @@ func Test_wyhash(t *testing.T) {
 	}
 }
 
-func BenchmarkWyHash(b *testing.B) {
-	var ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 = unsafe.Pointer(&[]byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")[0])
+func BenchmarkWyHash64(b *testing.B) {
+	var ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789__ = unsafe.Pointer(&[]byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789__")[0])
+	b.SetBytes(64)
 	b.RunParallel(
 		func(p *testing.PB) {
 			for p.Next() {
-				_ = wyhash(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789, 62, 42, &_wyp)
+				_ = wyhash(ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789__, 64, 42, &_wyp)
 			}
 		},
 	)
+}
+
+const seed = 42
+
+func BenchmarkWyHash128(b *testing.B) {
+	data := make([]byte, 128)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash256(b *testing.B) {
+	data := make([]byte, 256)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash512(b *testing.B) {
+	data := make([]byte, 512)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash1024(b *testing.B) {
+	data := make([]byte, 1024)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash2048(b *testing.B) {
+	data := make([]byte, 2048)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash4096(b *testing.B) {
+	data := make([]byte, 4096)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash8192(b *testing.B) {
+	data := make([]byte, 8192)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash16384(b *testing.B) {
+	data := make([]byte, 16384)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash32768(b *testing.B) {
+	data := make([]byte, 32768)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash65536(b *testing.B) {
+	data := make([]byte, 65536)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWyHash131072(b *testing.B) {
+	data := make([]byte, 131072)
+	rand.Read(data)
+	b.SetBytes(int64(len(data)))
+	b.RunParallel(func(p *testing.PB) {
+		for p.Next() {
+			Hash(data, seed)
+		}
+	})
+}
+
+func BenchmarkWYRAND(b *testing.B) {
+	b.RunParallel(func(p *testing.PB) {
+		var seed = splitmix64.Next()
+		for p.Next() {
+			_ = WYRAND(&seed)
+		}
+	})
 }
