@@ -74,6 +74,8 @@ func wyrand(seed *uint64) uint64 {
 	return _wymix(*seed, *seed^0xe7037ed1a0b428db)
 }
 
+func WYRAND(seed *uint64) uint64 { return wyrand(seed) }
+
 func Hash(b []byte, seed uint64) uint64 {
 	return wyhash(
 		unsafe.Pointer((*reflect.SliceHeader)(unsafe.Pointer(&b)).Data),
