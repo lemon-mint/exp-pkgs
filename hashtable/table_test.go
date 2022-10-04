@@ -22,7 +22,7 @@ var keys []string = func() []string {
 	return k
 }()
 
-func TestTable(t *testing.T) {
+func TestTableInsert(t *testing.T) {
 	table := hashtable.New[string, string](1, hash.MemHashString64)
 	cpus := runtime.NumCPU()
 	fastrand.ShuffleSlice(keys)
@@ -48,6 +48,36 @@ func TestTable(t *testing.T) {
 		v, ok := table.Lookup(keys[i])
 		if !ok || v != keys[i] {
 			t.Fatalf("Expected %q, got %q", keys[i], v)
+		}
+	}
+}
+
+func TestTableDelete(t *testing.T) {
+	table := hashtable.New[string, string](1, hash.MemHashString64)
+	cpus := runtime.NumCPU()
+	fastrand.ShuffleSlice(keys)
+	ks := slice.Chunk(keys, size/cpus)
+
+	var wg sync.WaitGroup
+	for i := range ks {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+
+			for j := range ks[i] {
+				table.Insert(ks[i][j], ks[i][j])
+				runtime.Gosched()
+				table.Delete(ks[i][j])
+			}
+		}(i)
+	}
+	wg.Wait()
+
+	fastrand.ShuffleSlice(keys)
+	for i := range keys {
+		v, ok := table.Lookup(keys[i])
+		if ok {
+			t.Fatalf("Table:%s Expected null, got %q", keys[i], v)
 		}
 	}
 }
