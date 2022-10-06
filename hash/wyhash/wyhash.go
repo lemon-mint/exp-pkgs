@@ -93,3 +93,7 @@ func HashString(b string, seed uint64) uint64 {
 		&_wyp,
 	)
 }
+
+func WYHASH_RAW(key unsafe.Pointer, len uintptr, seed uint64) uint64 {
+	return wyhash(key, len, seed, &_wyp)
+}
