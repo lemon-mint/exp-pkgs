@@ -222,4 +222,31 @@ func TestFlatten(t *testing.T) {
 			t.Errorf("Flatten() = %v, want %v", got, want)
 		}
 	})
+
+	t.Run("map0", func(t *testing.T) {
+		in := map[int]int{}
+		want := []int(nil)
+		got := Flatten[int](in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("map1", func(t *testing.T) {
+		in := map[int]int{1: 2}
+		want := []int{1, 2}
+		got := Flatten[int](in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
+
+	t.Run("map1-ptr", func(t *testing.T) {
+		in := map[int]int{1: 2}
+		want := []int{1, 2}
+		got := Flatten[int](&in)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("Flatten() = %v, want %v", got, want)
+		}
+	})
 }

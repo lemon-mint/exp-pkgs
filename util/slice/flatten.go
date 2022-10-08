@@ -52,6 +52,14 @@ TYPE_SWITCH:
 				result = append(result, Flatten[T](elem)...)
 			}
 			return result
+		case reflect.Map:
+			var result []T
+			for _, key := range rv.MapKeys() {
+				elem := rv.MapIndex(key).Interface()
+				result = append(result, Flatten[T](key.Interface())...)
+				result = append(result, Flatten[T](elem)...)
+			}
+			return result
 		}
 	}
 	return nil
