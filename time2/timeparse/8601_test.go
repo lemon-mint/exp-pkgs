@@ -1,6 +1,9 @@
 package timeparse
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestParse8601(t *testing.T) {
 	tests := []struct {
@@ -67,4 +70,52 @@ func TestParse8601(t *testing.T) {
 			}
 		})
 	}
+}
+
+func FuzzParse8601(f *testing.F) {
+	f.Add(time.Layout)
+	f.Add(time.ANSIC)
+	f.Add(time.UnixDate)
+	f.Add(time.RubyDate)
+	f.Add(time.RFC822)
+	f.Add(time.RFC822Z)
+	f.Add(time.RFC850)
+	f.Add(time.RFC1123)
+	f.Add(time.RFC1123Z)
+	f.Add(time.RFC3339)
+	f.Add(time.RFC3339Nano)
+	f.Add(time.Kitchen)
+	f.Add(time.Stamp)
+	f.Add(time.StampMilli)
+	f.Add(time.StampMicro)
+	f.Add(time.StampNano)
+
+	f.Add(":")
+	f.Add("::")
+	f.Add("/")
+	f.Add(",")
+	f.Add(" ")
+	f.Add("T")
+	f.Add("+")
+	f.Add("-")
+	f.Add("Z")
+	f.Add("0000")
+	f.Add("1970")
+	f.Add("00")
+	f.Add("0")
+	f.Add("1")
+	f.Add("2")
+	f.Add("3")
+	f.Add("4")
+	f.Add("5")
+	f.Add("6")
+	f.Add("7")
+	f.Add("8")
+	f.Add("9")
+	f.Add("10")
+
+	f.Fuzz(func(t *testing.T, data string) {
+		_ = t
+		Parse8601(data)
+	})
 }
