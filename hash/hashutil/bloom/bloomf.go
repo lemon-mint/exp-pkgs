@@ -97,3 +97,22 @@ func (bf *Bloom) GetString(s string) bool {
 	}
 	return true
 }
+
+func (bf *Bloom) Reset() {
+	for i := range bf.bits {
+		bf.bits[i] = 0
+	}
+}
+
+func (bf *Bloom) MarshalBinary() (data []byte, err error) {
+	return bf.Bytes(), nil
+}
+
+func (bf *Bloom) UnmarshalBinary(data []byte) error {
+	v, err := FromBytes(data)
+	if err != nil {
+		return err
+	}
+	*bf = *v
+	return nil
+}
