@@ -56,6 +56,7 @@ func FromBytes(buf []byte) (*Bloom, error) {
 
 func hash(s []byte, i uint64) uint64 {
 	seed := splitmix64.Splitmix64(&i)
+	seed = wyhash.WYRAND(&seed)
 	return wyhash.Hash(s, seed)
 }
 
