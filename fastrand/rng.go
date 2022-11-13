@@ -75,3 +75,29 @@ func (rng *RNG) Release() {
 func (rng *RNG) Refill() {
 	refill(rng)
 }
+
+type FastRandReader struct {
+	RNG *RNG
+}
+
+func (r *FastRandReader) Read(p []byte) (n int, err error) {
+	if r.RNG == nil {
+		r.RNG = AcquireRNG()
+	}
+	n = len(p)
+
+	for len(p) >= 8 {
+		binary.LittleEndian.PutUint64(p, r.RNG.Uint64())
+		p = p[8:]
+	}
+
+	if len(p) > 0 {
+		v := r.RNG.Uint64()
+		for i := 0; i < len(p); i++ {
+			v >>= 8
+			p[i] = byte(v)
+		}
+	}
+
+	return
+}
