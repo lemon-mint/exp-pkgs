@@ -31,7 +31,6 @@ func (s iSlice) Sort() {
 var ErrInvalidInterval = errors.New("invalid interval")
 
 func intersection(s iSlice) (lower, upper uint64, ok bool) {
-	s.Sort()
 	var M uint64 = uint64(s.Len()) / 3
 	var F uint64
 
