@@ -52,7 +52,7 @@ func intersection(s iSlice) (lower, upper uint64, ok bool) {
 		End = 0
 
 		for i := len(s) - 1; i >= 0; i-- {
-			End = End - uint64(s[i].Type)
+			End = End + uint64(s[i].Type)
 			if End >= M-F {
 				upper = s[i].Offset
 				break
