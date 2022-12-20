@@ -1,7 +1,6 @@
 package gopool2
 
 import (
-	"fmt"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -24,14 +23,11 @@ func newGoroutine(p *GoPool2) *goroutine {
 	g := &goroutine{
 		job: ch,
 	}
-	gs := atomic.AddUint64(&p.gos, 1)
-	fmt.Println("[new goroutine] Active goroutines:", gs)
 	go worker(p, g)
 	return g
 }
 
 type GoPool2 struct {
-	gos  uint64
 	pool sync.Pool
 }
 
@@ -57,8 +53,6 @@ func worker(p *GoPool2, g *goroutine) {
 		j()
 		p.pool.Put(g)
 	}
-	gs := atomic.AddUint64(&p.gos, ^uint64(0))
-	fmt.Println("[evict goroutine] Active goroutines:", gs)
 }
 
 func NewPool() *GoPool2 {
