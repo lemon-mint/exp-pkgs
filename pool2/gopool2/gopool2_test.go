@@ -14,7 +14,7 @@ func some_io_job(wg *sync.WaitGroup) {
 }
 
 func BenchmarkGoPool2(b *testing.B) {
-	p := gopool2.NewPool()
+	p := gopool2.New()
 	var wg sync.WaitGroup
 	wg.Add(b.N)
 

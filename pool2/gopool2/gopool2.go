@@ -55,7 +55,7 @@ func worker(p *GoPool2, g *goroutine) {
 	}
 }
 
-func NewPool() *GoPool2 {
+func New() *GoPool2 {
 	p := &GoPool2{}
 	p.pool.New = func() interface{} {
 		return newGoroutine(p)
