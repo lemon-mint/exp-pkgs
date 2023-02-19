@@ -98,6 +98,7 @@ func BenchmarkTableRead100(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -123,6 +124,7 @@ func BenchmarkSyncMapRead100(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -148,6 +150,7 @@ func BenchmarkTableRead90Write10(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -173,6 +176,7 @@ func BenchmarkSyncMapRead90Write10(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -198,6 +202,7 @@ func BenchmarkTableRead70Write30(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -223,6 +228,7 @@ func BenchmarkSyncMapRead70Write30(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -248,6 +254,7 @@ func BenchmarkTableRead50Write50(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -273,6 +280,7 @@ func BenchmarkSyncMapRead50Write50(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -298,6 +306,7 @@ func BenchmarkTableRead30Write70(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -323,6 +332,7 @@ func BenchmarkSyncMapRead30Write70(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -348,6 +358,7 @@ func BenchmarkTableRead10Write90(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -373,6 +384,7 @@ func BenchmarkSyncMapRead10Write90(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -398,6 +410,7 @@ func BenchmarkTableWrite100(b *testing.B) {
 	for i := range keys2 {
 		table.Insert(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
@@ -423,6 +436,7 @@ func BenchmarkSyncMapWrite100(b *testing.B) {
 	for i := range keys2 {
 		table.Store(keys2[i], 0)
 	}
+	b.SetBytes(int64(size2 * 10))
 	b.ResetTimer()
 	b.RunParallel(func(p *testing.PB) {
 		for p.Next() {
