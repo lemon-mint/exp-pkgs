@@ -1,3 +1,3 @@
-module v8.run/go/exp
+module gopkg.eu.org/exppkgs
 
 go 1.18
