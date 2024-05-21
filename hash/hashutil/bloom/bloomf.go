@@ -5,8 +5,8 @@ import (
 	"errors"
 	"math"
 
-	"v8.run/go/exp/fastrand/alg/splitmix64"
-	"v8.run/go/exp/hash/wyhash"
+	"gopkg.eu.org/exppkgs/fastrand/alg/splitmix64"
+	"gopkg.eu.org/exppkgs/hash/wyhash"
 )
 
 type Bloom struct {

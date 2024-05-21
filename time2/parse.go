@@ -3,7 +3,7 @@ package time2
 import (
 	"time"
 
-	"v8.run/go/exp/time2/timeparse"
+	"gopkg.eu.org/exppkgs/time2/timeparse"
 )
 
 type DateTime struct {

@@ -1,7 +1,7 @@
 package slice
 
 import (
-	"v8.run/go/exp/fastrand"
+	"gopkg.eu.org/exppkgs/fastrand"
 )
 
 func Shuffle[T any](data []T) {

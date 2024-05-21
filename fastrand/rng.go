@@ -5,8 +5,8 @@ import (
 	"encoding/binary"
 	"sync"
 
-	"v8.run/go/exp/fastrand/alg/splitmix64"
-	"v8.run/go/exp/util/noescape"
+	"gopkg.eu.org/exppkgs/fastrand/alg/splitmix64"
+	"gopkg.eu.org/exppkgs/util/noescape"
 )
 
 type RNG struct {

@@ -5,7 +5,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"v8.run/go/exp/broadcast"
+	"gopkg.eu.org/exppkgs/broadcast"
 )
 
 var evbus_map sync.Map

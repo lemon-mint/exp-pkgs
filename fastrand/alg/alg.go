@@ -1,8 +1,8 @@
 package alg
 
 import (
-	"v8.run/go/exp/fastrand/alg/splitmix64"
-	"v8.run/go/exp/fastrand/alg/xoshiro256plusplus"
+	"gopkg.eu.org/exppkgs/fastrand/alg/splitmix64"
+	"gopkg.eu.org/exppkgs/fastrand/alg/xoshiro256plusplus"
 )
 
 func Splitmix64() uint64 {

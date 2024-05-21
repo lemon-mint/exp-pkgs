@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"v8.run/go/exp/hash/hashutil/bloom"
+	"gopkg.eu.org/exppkgs/hash/hashutil/bloom"
 )
 
 var (

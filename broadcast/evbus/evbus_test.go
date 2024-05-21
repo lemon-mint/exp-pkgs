@@ -4,7 +4,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"v8.run/go/exp/broadcast/evbus"
+	"gopkg.eu.org/exppkgs/broadcast/evbus"
 )
 
 func TestEvbus(t *testing.T) {

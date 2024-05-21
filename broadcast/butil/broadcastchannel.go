@@ -3,7 +3,7 @@ package butil
 import (
 	"sync"
 
-	"v8.run/go/exp/broadcast"
+	"gopkg.eu.org/exppkgs/broadcast"
 )
 
 var broadcastChannelMap = sync.Map{}

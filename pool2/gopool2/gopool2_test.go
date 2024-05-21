@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"v8.run/go/exp/pool2/gopool2"
+	"gopkg.eu.org/exppkgs/pool2/gopool2"
 )
 
 func some_io_job(wg *sync.WaitGroup) {

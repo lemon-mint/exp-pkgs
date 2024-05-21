@@ -16,7 +16,7 @@ package xoshiro256plusplus
 import (
 	"sync"
 
-	"v8.run/go/exp/fastrand/alg/splitmix64"
+	"gopkg.eu.org/exppkgs/fastrand/alg/splitmix64"
 )
 
 type State [4]uint64

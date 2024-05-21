@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
-	"v8.run/go/exp/fastrand"
+	"gopkg.eu.org/exppkgs/fastrand"
 )
 
 func RandString(size int) string {

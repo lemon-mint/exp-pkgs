@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"unsafe"
 
-	"v8.run/go/exp/hash/wyhash"
+	"gopkg.eu.org/exppkgs/hash/wyhash"
 )
 
 func Hasher[T comparable](seed uint64) func(T) uint64 {

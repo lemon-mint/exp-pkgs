@@ -4,7 +4,7 @@ import (
 	_ "runtime"
 	_ "unsafe"
 
-	"v8.run/go/exp/util/mathutil"
+	"gopkg.eu.org/exppkgs/util/mathutil"
 )
 
 func runtime_fastrand() uint32

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"v8.run/go/exp/pool2/gopool1"
+	"gopkg.eu.org/exppkgs/pool2/gopool1"
 )
 
 func TestGoPool1Leak(t *testing.T) {

@@ -3,7 +3,7 @@ package fastrand_test
 import (
 	"fmt"
 
-	"v8.run/go/exp/fastrand/alg"
+	"gopkg.eu.org/exppkgs/fastrand/alg"
 )
 
 func Example_splitmix64() {

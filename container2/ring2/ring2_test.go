@@ -3,7 +3,7 @@ package ring2_test
 import (
 	"testing"
 
-	"v8.run/go/exp/container2/ring2"
+	"gopkg.eu.org/exppkgs/container2/ring2"
 )
 
 func TestRing2(t *testing.T) {

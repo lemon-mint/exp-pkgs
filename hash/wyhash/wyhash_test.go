@@ -5,7 +5,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"v8.run/go/exp/fastrand/alg/splitmix64"
+	"gopkg.eu.org/exppkgs/fastrand/alg/splitmix64"
 )
 
 func Test_wyhash(t *testing.T) {

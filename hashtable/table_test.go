@@ -6,10 +6,10 @@ import (
 	"sync"
 	"testing"
 
-	"v8.run/go/exp/fastrand"
-	"v8.run/go/exp/hash"
-	"v8.run/go/exp/hashtable"
-	"v8.run/go/exp/util/slice"
+	"gopkg.eu.org/exppkgs/fastrand"
+	"gopkg.eu.org/exppkgs/hash"
+	"gopkg.eu.org/exppkgs/hashtable"
+	"gopkg.eu.org/exppkgs/util/slice"
 )
 
 const size = 1 << 20

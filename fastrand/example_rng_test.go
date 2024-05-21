@@ -3,7 +3,7 @@ package fastrand_test
 import (
 	"fmt"
 
-	"v8.run/go/exp/fastrand"
+	"gopkg.eu.org/exppkgs/fastrand"
 )
 
 func Example_rNG() {
